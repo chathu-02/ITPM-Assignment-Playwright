@@ -4,11 +4,10 @@ This repository includes an automated test suite for the SwiftTranslator web app
  Project Overview
 The main objective of this project is to recognize the system's limitations and weaknesses as part of the ITPM Assignment. The test suite includes the following test cases:
 
-Positive Functional Tests (24 Cases): Evaluating scenarios where the system is functioning correctly by converting Singlish to accurate Sinhala Unicode.
+Positive Functional Tests (24 Cases): Evaluating scenarios where the  functioning correctly by converting Singlish to accurate Sinhala Unicode.
 
-Negative Functional Tests (10 Cases): Identifying scenarios where the system is not functioning correctly by failing to provide the accurate output for complex grammar rules, using special vowel signs like Pili, and mixing alphanumeric characters.
+Negative Functional Tests (10 Cases): Identifying scenarios where the  not functioning correctly by failing to provide the accurate output for complex grammar rules, using special vowel signs like Pili, and mixing alphanumeric characters.
 
-UI Testing: Evaluating the real-time behavior and UI element behavior, such as the "Clear" button.
 
 Tech Stack
 1.Framework: Playwright (Node.js)
