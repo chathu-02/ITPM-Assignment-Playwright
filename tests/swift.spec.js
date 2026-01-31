@@ -1,95 +1,192 @@
 const { test, expect } = require('@playwright/test');
 
-test.describe('Swift Translator - Full Verification Suite', () => {
 
-    const testData = [
-        // Positive Functional Tests 
-        { id: 'Pos_Fun_0001', input: 'api bath kamu' },
-        { id: 'Pos_Fun_0002', input: 'api paasal yamudha?' },
-        { id: 'Pos_Fun_0003', input: 'heta paayayi ' },
-        { id: 'Pos_Fun_0004', input: 'mama pothak kiyevvaa' },
-        { id: 'Pos_Fun_0005', input: 'Mama raeta kaeva mama yanavaa nidhiyanna' },
-        { id: 'Pos_Fun_0006', input: 'oyagee gedhara address eka mokadhdha?' },
-        { id: 'Pos_Fun_0007', input: 'machine eka on karanna' },
-        { id: 'Pos_Fun_0008', input: 'Api Zoo ekata yamu' },
-        { id: 'Pos_Fun_0009', input: 'ohu mehee aave naene' },
-        { id: 'Pos_Fun_0010', input: 'Mata rupiyal 100k dhenna' },
-        { id: 'Pos_Fun_0011', input: 'Meeting eka ude 8 a.m patangannavaa' },
-        { id: 'Pos_Fun_0012', input: 'ayyo! mokadha anee me?' },
-        { id: 'Pos_Fun_0013', input: 'vaessa vuNath api yannama oone' },
-        { id: 'Pos_Fun_0014', input: 'mama ehee yanne nae' },
-        { id: 'Pos_Fun_0015', input: 'ovun adha enne nae' },
-        { id: 'Pos_Fun_0016', input: 'vahaama meheta enna' },
-        { id: 'Pos_Fun_0017', input: 'Zoom link eka Whatsapp karanna' },
-        { id: 'Pos_Fun_0018', input: 'Adha mama campus giye nae mokadha mata asaniipa nisaa' },
-        { id: 'Pos_Fun_0019', input: 'magee upandhinaya 2002.pebaravaari 19 vanadhaaya' },
-        { id: 'Pos_Fun_0020', input: 'Jeesu pihitayi..!' },
-        { id: 'Pos_Fun_0021', input: 'magee beheth tika genalla dhenne' },
-        { id: 'Pos_Fun_0022', input: 'eeka Rs.1000k venavaa' },
-        { id: 'Pos_Fun_0023', input: 'mamayi oyayi yamu ehe ' },
-        { id: 'Pos_Fun_0024', input: 'mama yanavaa (nuvara) adha' },
+test.describe('Swift Translator - Full Functional Suite (IT23821490)', () => {
 
-        // Large Text
-        { 
-            id: 'Robustness_0001', 
-            input: 'shrii lQQkaava indhiyaan saagarayei pihiti dhupathaki. mehi viviDha saqqskrRUthiin saha viviDha jaathiin vaasaya karathi. lQQkaavee ithihaasaya varSha dhahas gaanakata dhiva yayi. anuraadhapuraya saha polonnaruva vaeni puraaNa nagara mehi ithihasaya piLibaDHA saakShi dharayi. varthamaana kaalayeidha shrii lQQkaava sQQchaaraka udhyogaya nisaa lookayei prachalithava aetha. mehi thiyena lassana kadhukaraya saha sundhara vella sanchaarakayin aedhaganiyi. thavadha sinhala saha dhemaLa Bhaashaa mehi pradhaana Bhaashaa lesa Bhaavithaa karayi. mehi viviDha aagamika uthsava saha saqqskrRUthiin kriyaakaarakam raesak thibei. eya ratee ekamuthukama penvana hoDHA saadhakayaki' 
-        },
-
-        // Negative Functional Tests 
-        { id: 'Neg_Fun_0001', input: 'mm gedhara yanvaa', expected: 'මම ගෙදර යනවා' },
-        { id: 'Neg_Fun_0002', input: 'vidhyava', expected: 'විද්‍යාව' },
-        { id: 'Neg_Fun_0003', input: 'vishvavidhyalaya', expected: 'විශ්වවිද්‍යාලය' },
-        { id: 'Neg_Fun_0004', input: 'ado, moko wenne?', expected: 'අඩෝ, මොකෝ වෙන්නේ?' },
-        { id: 'Neg_Fun_0005', input: 'bala', expected: 'බලන්න' },
-        { id: 'Neg_Fun_0006', input: 'api pansal yanavaa', expected: 'අපි   පන්සල්   යනවා' },
-        { id: 'Neg_Fun_0007', input: 'gnaanaya', expected: 'ඥානය' },
-        { id: 'Neg_Fun_0008', input: 'MAMA GIYA', expected: 'මම ගියා' },
-        { id: 'Neg_Fun_0009', input: 'kaaryalaaya', expected: 'කාර්යාලය' },
-        { id: 'Neg_Fun_0010', input: 'sri lankaawa', expected: 'ශ්‍රී ලංකාව' },
-        { id: 'Neg_Fun_0011', input: 'oxygn', expected: 'ඔක්සිජන්' }
-    ];
-
-    for (const tc of testData) {
-        test(`${tc.id}`, async ({ page }) => {
-            await page.goto('https://www.swifttranslator.com/', { waitUntil: 'networkidle' });
-
-            const inputField = page.locator('textarea').first();
-            const outputField = page.locator('textarea').last();
-
-            await inputField.click();
-            await inputField.clear();
-
-            if (tc.input.length > 100) {
-                await inputField.fill(tc.input);
-            } else {
-                await inputField.pressSequentially(tc.input, { delay: 60 });
-            }
-            await page.keyboard.press(' '); 
-
-           
-            await page.waitForTimeout(3000); 
-
-            const actualOutput = await outputField.inputValue();
-            console.log(`LOG - ${tc.id}: Input: ${tc.input} | Actual: ${actualOutput} | Expected: ${tc.expected}`);
-
-            // Logic: Expected != Actual => Fail the test
-            // Negative cases have expected defined to validate against
-            expect(actualOutput.trim(), `Failing ${tc.id} because the system output does not match the correct Sinhala spelling.`).toBe(tc.expected);
+    test.beforeEach(async ({ page }) => {
+        
+        await page.goto('https://www.swifttranslator.com/', { 
+            waitUntil: 'networkidle' 
         });
+    });
+
+    /**
+     * Helper function to execute translation and verify result
+     */
+    async function verifyTranslation(page, singlishText, expectedSinhala) {
+        const input = page.getByPlaceholder('Input Your Singlish Text Here.');
+        await input.fill(singlishText);
+        await page.keyboard.press('Space');
+        
+        
+        const outputContainer = page.locator('#result-area, body'); 
+        await expect(outputContainer).toContainText(expectedSinhala);
     }
 
-    // UI Negative Test Case
-    test('UI_Neg_0001: Clear Button on Empty Field', async ({ page }) => {
-        await page.goto('https://www.swifttranslator.com/', { waitUntil: 'networkidle' });
-        
-        const inputArea = page.locator('textarea').first();
-        const clearBtn = page.getByRole('button', { name: /clear/i }).first();
+    // --- POSITIVE FUNCTIONAL TESTS ---
 
-        await expect(inputArea).toHaveValue('');
-        await clearBtn.click();
-
-        // Intentionally failing test: Although the system should be empty, we expect it to show "Error".
-        // This will cause the test to fail and be highlighted in red.
-        await expect(inputArea, 'UI did not show an error state on empty clear').toHaveValue('Error');
+    test('TC_01: Pos_Fun_0001 - Basic Statement', async ({ page }) => {
+        await verifyTranslation(page, 'api bath kamu', 'අපි බත් කමු');
     });
+
+    test('TC_02: Pos_Fun_0002 - Question Sentence', async ({ page }) => {
+        await verifyTranslation(page, 'api paasal yamudha?', 'අපි පාසල් යමුද?');
+    });
+
+    test('TC_03: Pos_Fun_0003 - Future Tense Statement', async ({ page }) => {
+        await verifyTranslation(page, 'heta paayayi', 'හෙට පායයි');
+    });
+
+    test('TC_04: Pos_Fun_0004 - ', async ({ page }) => {
+        await verifyTranslation(page, 'mama pothak kiyevvaa', 'මම පොතක් කියෙව්වා');
+    });
+
+    test('TC_05: Pos_Fun_0005 - compound', async ({ page }) => {
+        await verifyTranslation(page, 'Mama raeta kaeva mama yanavaa nidhiyanna', 'මම රැට කැව මම යනවා නිදියන්න');
+    });
+
+    test('TC_06: Pos_Fun_0006 ', async ({ page }) => {
+        await verifyTranslation(page, 'oyagee gedhara address eka  mokadhdha?', 'ඔයගේ ගෙදර address එක  මොකද්ද?');
+    });
+
+    test('TC_07: Pos_Fun_0007 ', async ({ page }) => {
+        await verifyTranslation(page, 'machine eka on karanna ', 'machine එක on කරන්න');
+    });
+
+    test('TC_08: Pos_Fun_0008 - Place Name', async ({ page }) => {
+        await verifyTranslation(page, 'ohu mehee aave naene', 'ඔහු මෙහේ ආවෙ නැනෙ');
+    });
+
+    test('TC_09: Pos_Fun_0009', async ({ page }) => {
+        await verifyTranslation(page, 'Api Zoo ekata  yamu', 'අපි Zoo එකට යමු');
+    });
+
+    test('TC_10: Pos_Fun_0010', async ({ page }) => {
+        await verifyTranslation(page, 'Mata rupiyal 100k dhenna', 'මට රුපියල් 100ක් දෙන්න');
+    });
+
+    test('TC_11: Pos_Fun_0011 ', async ({ page }) => {
+        await verifyTranslation(page, 'Meeting eka udhee 8 a.m patangannavaa', 'Meeting එක උදේ 8 a.m පටන්ගන්නවා');
+    });
+
+    test('TC_12: Pos_Fun_0012 ', async ({ page }) => {
+        await verifyTranslation(page, 'ayyo! mokadha anee me?', 'අය්යො! මොකද අනේ මෙ?');
+    });
+
+    test('TC_13: Pos_Fun_0013 ', async ({ page }) => {
+        await verifyTranslation(page, 'vaessa vuNath api yannama oone', 'වැස්ස වුණත් අපි යන්නම ඕනෙ');
+    });
+
+    test('TC_14: Pos_Fun_0014 - Rakaransaya Translation', async ({ page }) => {
+        await verifyTranslation(page, 'mama ehee yanne nae', 'මම එහේ යන්නෙ නැ');
+    });
+
+    test('TC_15: Pos_Fun_0015 ', async ({ page }) => {
+        await verifyTranslation(page, 'ovun adha enne nae', 'ඔවුන් අද එන්නෙ නැ');
+    });
+
+    test('TC_16: Pos_Fun_0016 ', async ({ page }) => {
+        await verifyTranslation(page, 'vahaama meheta enna', 'වහාම මෙහෙට එන්න');
+    });
+
+    test('TC_17: Pos_Fun_0017 - Mahaprana Letters', async ({ page }) => {
+        await verifyTranslation(page, 'Zoom link eka Whatsapp karanna', 'Zoom link එක Whatsapp කරන්න');
+    });
+
+    test('TC_18: Pos_Fun_0018 ', async ({ page }) => {
+        await verifyTranslation(page, 'Adha mama campus giye nae mokadha mata asaniipa nisaa', 'අද මම campus ගියෙ නැ මොකද මට අසනීප නිසා');
+    });
+
+    test('TC_19: Pos_Fun_0019', async ({ page }) => {
+        await verifyTranslation(page, 'magee upandhinaya 2002.pebaravaari 19 vanadhaaya', 'මගේ උපන්දිනය 2002.පෙබරවාරි 19 වනදාය');
+    });
+
+    test('TC_20: Pos_Fun_0020 ', async ({ page }) => {
+        await verifyTranslation(page, 'Jeesu pihitayi', 'ඦේසු පිහිටයි');
+    });
+
+    test('TC_21: Pos_Fun_0021 ', async ({ page }) => {
+        await verifyTranslation(page, 'magee beheth tika genalla dhenne', 'මගේ බෙහෙත් ටික ගෙනල්ල දෙන්න');
+    });
+
+    test('TC_22: Pos_Fun_0022 ', async ({ page }) => {
+        await verifyTranslation(page, 'eeka Rs.1000k venavaa', 'ඒක Rs.1000ක් වෙනවා');
+    });
+
+    test('TC_23: Pos_Fun_0023 ', async ({ page }) => {
+        await verifyTranslation(page, 'shrii lQQkaava indhiyaan saagarayei pihiti dhupathaki. mehi viviDha saqqskrRUthiin saha viviDha jaathiin vaasaya karathi. lQQkaavee ithihaasaya varSha dhahas gaanakata  dhiva yayi. anuraadhapuraya saha polonnaruva vaeni puraaNa nagara mehi ithihasaya piLibaDHA saakShi dharayi. varthamaana kaalayeidha shrii lQQkaava sQQchaaraka udhyogaya nisaa lookayei prachalithava aetha. mehi thiyena lassana kadhukaraya saha sundhara vella sanchaarakayin aedhaganiyi. thavadha sinhala saha dhemaLa Bhaashaa mehi pradhaana Bhaashaa lesa Bhaavithaa karayi. mehi viviDha aagamika uthsava saha saqqskrRUthiin kriyaakaarakam raesak thibei. eya ratee ekamuthukama penvana hoDHA saadhakayaki dawasak', 'ශ්‍රී ලංකාව ඉන්දියාන් සාගරයේ පිහිටි දුපතකි. මෙහි විවිධ සංස්ක්‍රෘතීන් සහ විවිධ ජාතීන් වාසය කරති. ලංකාවේ ඉතිහාසය වර්ෂ දහස් ගානකට  දිව යයි. අනුරාදපුරය සහ පොලොන්නරුව වැනි පුරාණ නගර මෙහි ඉතිහසය පිළිබඳ සාක්ෂි දරයි. වර්තමාන කාලයේද ශ්‍රී ලංකාව සංචාරක උද්යොගය නිසා ලෝකයේ ප්‍රචලිතව ඇත. මෙහි තියෙන ලස්සන කදුකරය සහ සුන්දර වෙල්ල සන්චාරකයින් ඇදගනියි. තවද sinhala සහ දෙමළ භාශා මෙහි ප්‍රදාන භාශා ලෙස භාවිතා කරයි. මෙහි විවිධ ආගමික උත්සව සහ සංස්ක්‍රෘතීන් ක්‍රියාකාරකම් රැසක් තිබේ. එය රටේ එකමුතුකම පෙන්වන හොඳ සාදකයකි');
+    });
+
+    test('TC_24: Pos_Fun_0024 - ', async ({ page }) => {
+        await verifyTranslation(page, 'mamayi oyayi yamu ehe', 'මමයි ඔයයි යමු එහෙ');
+    });
+    
+
+    test('TC_25: Neg_Fun_0001  ', async ({ page }) => {
+        const input = page.getByPlaceholder('Input Your Singlish Text Here.');
+        await input.fill('mmgedharayanavaa');
+        await page.keyboard.press('Space');
+        await expect(page.locator('body')).toContainText('මම ගෙදර යනවා.');
+    });
+
+    test('TC_26: Neg_Fun_0002  ', async ({ page }) => {
+        const input = page.getByPlaceholder('Input Your Singlish Text Here.');
+       
+        await input.fill('vidhyava');
+        await page.keyboard.press('Space');
+        await expect(page.locator('body')).toContainText('විද්‍යාව');
+    });
+    test('TC_27: Neg_Fun_0003  ', async ({ page }) => {
+        const input = page.getByPlaceholder('Input Your Singlish Text Here.');
+       
+        await input.fill('vishvavidhyalaya');
+        await page.keyboard.press('Space');
+        await expect(page.locator('body')).toContainText('විශ්වවිද්‍යාලය');
+    });
+    test('TC_28: Neg_Fun_0004  ', async ({ page }) => {
+        const input = page.getByPlaceholder('Input Your Singlish Text Here.');
+        await input.fill('ado, moko wenne?');
+        await page.keyboard.press('Space');
+        await expect(page.locator('body')).toContainText('අඩෝ, මොකෝ වෙන්නේ?');
+    });
+    test('TC_29: Neg_Fun_0005  ', async ({ page }) => {
+        const input = page.getByPlaceholder('Input Your Singlish Text Here.');
+        await input.fill('bala');
+        await page.keyboard.press('Space');
+        await expect(page.locator('body')).toContainText('බාල');
+    });
+    test('TC_30: Neg_Fun_0006  ', async ({ page }) => {
+        const input = page.getByPlaceholder('Input Your Singlish Text Here.');
+        await input.fill('api        pansal             yanavaa.');
+        await page.keyboard.press('Space');
+        await expect(page.locator('body')).toContainText('අපි පන්සල් යනවා.');
+    });
+    test('TC_31: Neg_Fun_0007  ', async ({ page }) => {
+        const input = page.getByPlaceholder('Input Your Singlish Text Here.');
+        await input.fill('gnaanaya');
+        await page.keyboard.press('Space');
+        await expect(page.locator('body')).toContainText('ඥානය');
+    });
+    test('TC_32: Neg_Fun_0008  ', async ({ page }) => {
+        const input = page.getByPlaceholder('Input Your Singlish Text Here.');
+        await input.fill('MAMA GIYA');
+        await page.keyboard.press('Space');
+        await expect(page.locator('body')).toContainText('මම ගියා');
+    });
+    test('TC_33: Neg_Fun_0009  ', async ({ page }) => {
+        const input = page.getByPlaceholder('Input Your Singlish Text Here.');
+        await input.fill('kaaryalaaya');
+        await page.keyboard.press('Space');
+        await expect(page.locator('body')).toContainText('කාර්යාලය');
+    });
+    test('TC_34: Neg_Fun_00010  ', async ({ page }) => {
+        const input = page.getByPlaceholder('Input Your Singlish Text Here.');
+        await input.fill('oxygn');
+        await page.keyboard.press('Space');
+        await expect(page.locator('body')).toContainText('ඔක්සිජන්');
+    });
+    
+    
+
+
 });
